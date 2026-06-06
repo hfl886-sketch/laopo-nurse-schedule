@@ -16,8 +16,8 @@
     <main class="app-shell">
       <section class="hero">
         <div>
-          <p class="eyebrow">Nurse Schedule</p>
-          <h1>老婆护士排班助手</h1>
+          <p class="eyebrow">For My Love</p>
+          <h1>老婆护士排班助手 ❤️</h1>
           <p class="date-line" id="todayLabel">今天</p>
         </div>
         <div class="heart-badge" aria-label="love">♥</div>
@@ -45,11 +45,14 @@
       </section>
 
       <section class="today-card" id="todayCard">
-        <div class="card-topline">
-          <span>今日班次</span>
-          <strong id="todayShiftName">读取中</strong>
+        <div class="today-main">
+          <div class="shift-icon" id="todayShiftIcon">💤</div>
+          <div>
+            <span>今日班次</span>
+            <strong id="todayShiftName">读取中</strong>
+          </div>
         </div>
-        <div class="time-grid">
+        <div class="time-grid" id="timeGrid">
           <div>
             <span>上班</span>
             <strong id="startTime">--:--</strong>
@@ -66,9 +69,60 @@
         <p class="reminder" id="reminderText">愿今天也被温柔照顾。</p>
       </section>
 
+      <section class="panel anniversary-card">
+        <div class="section-heading">
+          <h2>我们的纪念日 ❤️</h2>
+          <button class="ghost-button" type="button" id="editAnniversaryButton">编辑</button>
+        </div>
+        <div class="anniversary-highlight" id="anniversaryHighlight">
+          先设置纪念日，我会帮你们记着每一个特别日子。
+        </div>
+        <div class="love-metrics">
+          <div>
+            <span>最近纪念日</span>
+            <strong id="nextAnniversaryText">--</strong>
+          </div>
+          <div>
+            <span>已经在一起</span>
+            <strong id="loveDaysText">--</strong>
+          </div>
+          <div>
+            <span>已经结婚</span>
+            <strong id="marriageDaysText">--</strong>
+          </div>
+        </div>
+        <form class="anniversary-form hidden" id="anniversaryForm">
+          <label>
+            <span>恋爱纪念日</span>
+            <input type="date" id="loveDate" />
+          </label>
+          <label>
+            <span>结婚纪念日</span>
+            <input type="date" id="weddingDate" />
+          </label>
+          <label>
+            <span>老婆生日</span>
+            <input type="date" id="wifeBirthday" />
+          </label>
+          <label>
+            <span>我的生日</span>
+            <input type="date" id="husbandBirthday" />
+          </label>
+          <button class="primary-button" type="submit">保存纪念日</button>
+        </form>
+      </section>
+
       <section class="panel">
         <div class="section-heading">
-          <h2>添加排班</h2>
+          <h2>未来7天排班</h2>
+          <span class="soft-note">一眼看到接下来怎么上班</span>
+        </div>
+        <div class="week-list" id="weekList"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>快速录入</h2>
           <button class="ghost-button" type="button" id="todayButton">今天</button>
         </div>
         <form class="schedule-form" id="scheduleForm">
@@ -76,16 +130,16 @@
             <span>日期</span>
             <input type="date" id="scheduleDate" required />
           </label>
-          <label>
-            <span>班次</span>
-            <select id="shiftSelect" required>
-              <option value="morning">早班 08:00-15:00</option>
-              <option value="afternoon">下午班 15:00-22:00</option>
-              <option value="evening">晚班 17:00-00:00</option>
-              <option value="night">夜班 22:00-次日08:00</option>
-            </select>
-          </label>
-          <button class="primary-button" type="submit">保存排班</button>
+          <input type="hidden" id="shiftSelect" value="morning" />
+          <div class="shift-buttons" aria-label="选择班次">
+            <button class="shift-choice active" type="button" data-shift="morning">🌞 早班</button>
+            <button class="shift-choice" type="button" data-shift="afternoon">🌤 下午班</button>
+            <button class="shift-choice" type="button" data-shift="evening">🌆 晚班</button>
+            <button class="shift-choice" type="button" data-shift="night">🌙 夜班</button>
+            <button class="shift-choice" type="button" data-shift="rest">💤 休息</button>
+          </div>
+          <button class="primary-button" type="submit">保存排班 ❤️</button>
+          <p class="save-toast" id="saveToast" role="status" aria-live="polite"></p>
         </form>
       </section>
 
@@ -96,6 +150,8 @@
         </div>
         <div class="schedule-list" id="scheduleList"></div>
       </section>
+
+      <footer class="app-footer">由老公法良为老婆定制 ❤️</footer>
     </main>
 
     <template id="scheduleItemTemplate">
