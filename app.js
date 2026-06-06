@@ -47,9 +47,15 @@ const els = {
   todayButton: document.querySelector("#todayButton"),
   clearPastButton: document.querySelector("#clearPastButton"),
   template: document.querySelector("#scheduleItemTemplate"),
+  photoStack: document.querySelector("#photoStack"),
+  photoSlides: [...document.querySelectorAll(".photo-slide")],
+  photoDots: [...document.querySelectorAll(".carousel-dots button")],
 };
 
 let schedules = loadSchedules();
+let activeSlide = 0;
+let slideTimer;
+let touchStartX = 0;
 
 function pad(value) {
   return String(value).padStart(2, "0");
@@ -196,6 +202,47 @@ function render() {
   renderList();
 }
 
+function showSlide(index) {
+  activeSlide = (index + els.photoSlides.length) % els.photoSlides.length;
+
+  els.photoSlides.forEach((slide, slideIndex) => {
+    slide.classList.toggle("active", slideIndex === activeSlide);
+  });
+
+  els.photoDots.forEach((dot, dotIndex) => {
+    dot.classList.toggle("active", dotIndex === activeSlide);
+  });
+}
+
+function startSlideTimer() {
+  clearInterval(slideTimer);
+  slideTimer = setInterval(() => showSlide(activeSlide + 1), 4500);
+}
+
+function setupCarousel() {
+  els.photoDots.forEach((dot) => {
+    dot.addEventListener("click", () => {
+      showSlide(Number(dot.dataset.slide));
+      startSlideTimer();
+    });
+  });
+
+  els.photoStack.addEventListener("touchstart", (event) => {
+    touchStartX = event.touches[0].clientX;
+  });
+
+  els.photoStack.addEventListener("touchend", (event) => {
+    const touchEndX = event.changedTouches[0].clientX;
+    const deltaX = touchEndX - touchStartX;
+
+    if (Math.abs(deltaX) < 45) return;
+    showSlide(activeSlide + (deltaX < 0 ? 1 : -1));
+    startSlideTimer();
+  });
+
+  startSlideTimer();
+}
+
 function setDefaultDate() {
   els.date.value = toDateKey(getToday());
 }
@@ -219,6 +266,7 @@ els.clearPastButton.addEventListener("click", () => {
 });
 
 setDefaultDate();
+setupCarousel();
 render();
 setInterval(renderToday, 30000);
 

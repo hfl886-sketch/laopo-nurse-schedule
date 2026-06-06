@@ -90,7 +90,8 @@ h1 {
 }
 
 .today-card,
-.panel {
+.panel,
+.memory-carousel {
   border: 1px solid rgba(255, 111, 159, 0.24);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.86);
@@ -101,6 +102,107 @@ h1 {
   display: grid;
   gap: 16px;
   padding: 20px;
+}
+
+.memory-carousel {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.memory-copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.memory-copy span {
+  color: var(--pink-dark);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.memory-copy strong {
+  color: #6f4054;
+  font-size: 0.96rem;
+  text-align: right;
+}
+
+.photo-stack {
+  position: relative;
+  height: clamp(210px, 58vw, 295px);
+  touch-action: pan-y;
+}
+
+.photo-slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  border: 8px solid #fff;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 18px 32px rgba(136, 59, 91, 0.18);
+  opacity: 0;
+  transform: translateX(16px) rotate(2deg) scale(0.96);
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+
+.photo-slide:nth-child(2) {
+  transform: translateX(-14px) rotate(-2deg) scale(0.95);
+}
+
+.photo-slide.active {
+  z-index: 2;
+  opacity: 1;
+  transform: translateX(0) rotate(-1deg) scale(1);
+}
+
+.photo-slide.active:nth-child(2) {
+  transform: translateX(0) rotate(1deg) scale(1);
+}
+
+.photo-slide img {
+  display: block;
+  width: 100%;
+  height: calc(100% - 36px);
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.photo-slide figcaption {
+  display: grid;
+  min-height: 36px;
+  place-items: center;
+  color: #7d4f61;
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+}
+
+.carousel-dots button {
+  width: 9px;
+  height: 9px;
+  border: 0;
+  border-radius: 999px;
+  background: #f0b8ca;
+  cursor: pointer;
+  padding: 0;
+  transition: width 220ms ease, background 220ms ease;
+}
+
+.carousel-dots button.active {
+  width: 24px;
+  background: var(--pink-dark);
 }
 
 .card-topline,
@@ -291,8 +393,18 @@ select:focus {
   }
 
   .today-card,
-  .panel {
+  .panel,
+  .memory-carousel {
     padding: 15px;
+  }
+
+  .memory-copy {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .memory-copy strong {
+    text-align: left;
   }
 
   .countdown-box strong {
