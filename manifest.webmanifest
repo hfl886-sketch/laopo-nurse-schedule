@@ -1,0 +1,19 @@
+{
+  "name": "老婆护士排班助手",
+  "short_name": "护士排班",
+  "description": "给老婆用的温馨护士排班助手",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff5f8",
+  "theme_color": "#ff6f9f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

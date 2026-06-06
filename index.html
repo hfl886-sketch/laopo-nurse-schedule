@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ff6f9f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="护士排班" />
+    <title>老婆护士排班助手</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Nurse Schedule</p>
+          <h1>老婆护士排班助手</h1>
+          <p class="date-line" id="todayLabel">今天</p>
+        </div>
+        <div class="heart-badge" aria-label="love">♥</div>
+      </section>
+
+      <section class="today-card" id="todayCard">
+        <div class="card-topline">
+          <span>今日班次</span>
+          <strong id="todayShiftName">读取中</strong>
+        </div>
+        <div class="time-grid">
+          <div>
+            <span>上班</span>
+            <strong id="startTime">--:--</strong>
+          </div>
+          <div>
+            <span>下班</span>
+            <strong id="endTime">--:--</strong>
+          </div>
+        </div>
+        <div class="countdown-box">
+          <span id="countdownTitle">距离上班</span>
+          <strong id="countdownText">--</strong>
+        </div>
+        <p class="reminder" id="reminderText">愿今天也被温柔照顾。</p>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>添加排班</h2>
+          <button class="ghost-button" type="button" id="todayButton">今天</button>
+        </div>
+        <form class="schedule-form" id="scheduleForm">
+          <label>
+            <span>日期</span>
+            <input type="date" id="scheduleDate" required />
+          </label>
+          <label>
+            <span>班次</span>
+            <select id="shiftSelect" required>
+              <option value="morning">早班 08:00-15:00</option>
+              <option value="afternoon">下午班 15:00-22:00</option>
+              <option value="evening">晚班 17:00-00:00</option>
+              <option value="night">夜班 22:00-次日08:00</option>
+            </select>
+          </label>
+          <button class="primary-button" type="submit">保存排班</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>最近排班</h2>
+          <button class="ghost-button" type="button" id="clearPastButton">清理过期</button>
+        </div>
+        <div class="schedule-list" id="scheduleList"></div>
+      </section>
+    </main>
+
+    <template id="scheduleItemTemplate">
+      <article class="schedule-item">
+        <div>
+          <strong class="item-date"></strong>
+          <span class="item-shift"></span>
+        </div>
+        <button class="delete-button" type="button" aria-label="删除排班">×</button>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
