@@ -61,7 +61,12 @@ const els = {
   countdownTitle: document.querySelector("#countdownTitle"),
   countdownText: document.querySelector("#countdownText"),
   reminderText: document.querySelector("#reminderText"),
+  loveNote: document.querySelector("#loveNote"),
   weekList: document.querySelector("#weekList"),
+  monthTitle: document.querySelector("#monthTitle"),
+  monthGrid: document.querySelector("#monthGrid"),
+  prevMonthButton: document.querySelector("#prevMonthButton"),
+  nextMonthButton: document.querySelector("#nextMonthButton"),
   form: document.querySelector("#scheduleForm"),
   date: document.querySelector("#scheduleDate"),
   shift: document.querySelector("#shiftSelect"),
@@ -84,14 +89,20 @@ const els = {
   photoStack: document.querySelector("#photoStack"),
   photoSlides: [...document.querySelectorAll(".photo-slide")],
   photoDots: [...document.querySelectorAll(".carousel-dots button")],
+  exportButton: document.querySelector("#exportButton"),
+  importButton: document.querySelector("#importButton"),
+  importFile: document.querySelector("#importFile"),
+  backupToast: document.querySelector("#backupToast"),
 };
 
 let schedules = loadJson(STORAGE_KEY, {});
 let anniversaries = loadJson(ANNIVERSARY_KEY, {});
+let calendarCursor = new Date(getToday().getFullYear(), getToday().getMonth(), 1);
 let activeSlide = 0;
 let slideTimer;
 let touchStartX = 0;
 let toastTimer;
+let backupToastTimer;
 
 function pad(value) {
   return String(value).padStart(2, "0");
@@ -128,6 +139,13 @@ function formatShortDate(dateKey) {
 
 function formatWeekday(dateKey) {
   return new Intl.DateTimeFormat("zh-CN", { weekday: "short" }).format(fromDateKey(dateKey));
+}
+
+function formatMonthTitle(date) {
+  return new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "long",
+  }).format(date);
 }
 
 function loadJson(key, fallback) {
@@ -196,6 +214,20 @@ function getShift(dateKey) {
   return shifts[schedules[dateKey]];
 }
 
+function getLoveNote(shift) {
+  if (!shift) return "老婆今天也要照顾好自己，有我在呢 ❤️";
+  if (shift.isRest) return "今天就把工作放一边，好好睡一觉，我负责想你 ❤️";
+
+  const notes = {
+    morning: "早班辛苦啦，早餐别省，忙完早点回家休息 ❤️",
+    afternoon: "下午班慢慢来，出门前吃点东西，我会惦记你 ❤️",
+    evening: "晚班回来注意安全，到家告诉我一声，我等你 ❤️",
+    night: "夜班最辛苦，能补觉就补觉，下班回来早点睡 ❤️",
+  };
+
+  return notes[schedules[toDateKey(getToday())]] || "老婆辛苦啦，今天也要照顾好自己 ❤️";
+}
+
 function renderToday() {
   const now = getToday();
   const todayKey = toDateKey(now);
@@ -210,6 +242,7 @@ function renderToday() {
     els.countdownTitle.textContent = "今日状态";
     els.countdownText.textContent = "还没有录入今天";
     els.reminderText.textContent = "如果今天休息，就给老婆记一个休息日吧。";
+    els.loveNote.textContent = getLoveNote();
     els.todayCard.style.background = "rgba(255, 255, 255, 0.9)";
     return;
   }
@@ -219,6 +252,7 @@ function renderToday() {
   els.reminderText.textContent = shift.isRest
     ? "今天好好休息，老公希望你睡个好觉 ❤️"
     : shift.reminder;
+  els.loveNote.textContent = getLoveNote(shift);
   els.todayCard.style.background = `linear-gradient(180deg, ${shift.tone}, rgba(255, 255, 255, 0.94))`;
 
   if (shift.isRest) {
@@ -267,6 +301,50 @@ function renderWeek() {
       </div>
     `;
     els.weekList.appendChild(item);
+  }
+}
+
+function renderMonth() {
+  const year = calendarCursor.getFullYear();
+  const month = calendarCursor.getMonth();
+  const todayKey = toDateKey(getToday());
+  const firstDay = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const mondayOffset = (firstDay.getDay() + 6) % 7;
+
+  els.monthTitle.textContent = formatMonthTitle(calendarCursor);
+  els.monthGrid.innerHTML = "";
+
+  for (let index = 0; index < mondayOffset; index += 1) {
+    const blank = document.createElement("span");
+    blank.className = "calendar-day blank";
+    els.monthGrid.appendChild(blank);
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const dateKey = toDateKey(new Date(year, month, day));
+    const shift = getShift(dateKey);
+    const button = document.createElement("button");
+    button.className = [
+      "calendar-day",
+      dateKey === todayKey ? "today" : "",
+      shift ? "has-shift" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+    button.type = "button";
+    button.innerHTML = `
+      <span class="calendar-day-number">${day}</span>
+      <span class="calendar-day-icon">${shift?.icon || "♡"}</span>
+      <span class="calendar-day-name">${shift?.name || "未排"}</span>
+    `;
+    button.addEventListener("click", () => {
+      els.date.value = dateKey;
+      if (shift) setSelectedShift(schedules[dateKey]);
+      showSaveToast(`已选中 ${formatDateLabel(dateKey)}`);
+      document.querySelector("#scheduleForm").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    els.monthGrid.appendChild(button);
   }
 }
 
@@ -363,6 +441,7 @@ function renderAnniversaries() {
 function render() {
   renderToday();
   renderWeek();
+  renderMonth();
   renderList();
   renderAnniversaries();
 }
@@ -423,6 +502,14 @@ function showSaveToast(text) {
   }, 2600);
 }
 
+function showBackupToast(text) {
+  clearTimeout(backupToastTimer);
+  els.backupToast.textContent = text;
+  backupToastTimer = setTimeout(() => {
+    els.backupToast.textContent = "";
+  }, 3000);
+}
+
 function setDefaultDate() {
   els.date.value = toDateKey(getToday());
 }
@@ -446,6 +533,16 @@ els.shiftButtons.forEach((button) => {
 });
 
 els.todayButton.addEventListener("click", setDefaultDate);
+
+els.prevMonthButton.addEventListener("click", () => {
+  calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth() - 1, 1);
+  renderMonth();
+});
+
+els.nextMonthButton.addEventListener("click", () => {
+  calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth() + 1, 1);
+  renderMonth();
+});
 
 els.clearPastButton.addEventListener("click", () => {
   const todayKey = toDateKey(getToday());
@@ -474,6 +571,60 @@ els.anniversaryForm.addEventListener("submit", (event) => {
   saveAnniversaries();
   els.anniversaryForm.classList.add("hidden");
   renderAnniversaries();
+});
+
+els.exportButton.addEventListener("click", () => {
+  const payload = {
+    app: "老婆护士排班助手",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    schedules,
+    anniversaries,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `老婆护士排班备份-${toDateKey(getToday())}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  showBackupToast("备份文件已生成 ❤️");
+});
+
+els.importButton.addEventListener("click", () => {
+  els.importFile.click();
+});
+
+els.importFile.addEventListener("change", async () => {
+  const file = els.importFile.files[0];
+  if (!file) return;
+
+  try {
+    const content = await file.text();
+    const parsed = JSON.parse(content);
+
+    if (!parsed || typeof parsed !== "object") throw new Error("Invalid backup");
+    if (!parsed.schedules || typeof parsed.schedules !== "object") {
+      throw new Error("Missing schedules");
+    }
+
+    schedules = parsed.schedules;
+    anniversaries =
+      parsed.anniversaries && typeof parsed.anniversaries === "object"
+        ? parsed.anniversaries
+        : {};
+    saveSchedules();
+    saveAnniversaries();
+    fillAnniversaryForm();
+    render();
+    showBackupToast("已恢复数据啦 ❤️");
+  } catch {
+    showBackupToast("这个备份文件好像不对");
+  } finally {
+    els.importFile.value = "";
+  }
 });
 
 setDefaultDate();

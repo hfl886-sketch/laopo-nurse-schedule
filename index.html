@@ -23,27 +23,6 @@
         <div class="heart-badge" aria-label="love">♥</div>
       </section>
 
-      <section class="memory-carousel" aria-label="家庭照片">
-        <div class="memory-copy">
-          <span>Family Album</span>
-          <strong>给辛苦上班的妈妈一点甜</strong>
-        </div>
-        <div class="photo-stack" id="photoStack">
-          <figure class="photo-slide active">
-            <img src="assets/baby-rabbit.jpg" alt="宝宝穿着兔兔衣服的照片" />
-            <figcaption>小宝贝在等妈妈回家</figcaption>
-          </figure>
-          <figure class="photo-slide">
-            <img src="assets/family-memory.jpg" alt="爸爸妈妈的合照" />
-            <figcaption>我们一直在你身边</figcaption>
-          </figure>
-        </div>
-        <div class="carousel-dots" aria-label="切换照片">
-          <button class="active" type="button" aria-label="查看第一张照片" data-slide="0"></button>
-          <button type="button" aria-label="查看第二张照片" data-slide="1"></button>
-        </div>
-      </section>
-
       <section class="today-card" id="todayCard">
         <div class="today-main">
           <div class="shift-icon" id="todayShiftIcon">💤</div>
@@ -67,6 +46,57 @@
           <strong id="countdownText">--</strong>
         </div>
         <p class="reminder" id="reminderText">愿今天也被温柔照顾。</p>
+        <p class="love-note" id="loveNote">老婆辛苦啦，今天也要照顾好自己 ❤️</p>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>未来7天排班</h2>
+          <span class="soft-note">一眼看到接下来怎么上班</span>
+        </div>
+        <div class="week-list" id="weekList"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>本月排班日历</h2>
+          <div class="month-actions">
+            <button class="icon-button" type="button" id="prevMonthButton" aria-label="上个月">‹</button>
+            <strong id="monthTitle">本月</strong>
+            <button class="icon-button" type="button" id="nextMonthButton" aria-label="下个月">›</button>
+          </div>
+        </div>
+        <div class="calendar-weekdays">
+          <span>一</span>
+          <span>二</span>
+          <span>三</span>
+          <span>四</span>
+          <span>五</span>
+          <span>六</span>
+          <span>日</span>
+        </div>
+        <div class="month-grid" id="monthGrid"></div>
+      </section>
+
+      <section class="memory-carousel" aria-label="家庭照片">
+        <div class="memory-copy">
+          <span>Family Album</span>
+          <strong>给辛苦上班的妈妈一点甜</strong>
+        </div>
+        <div class="photo-stack" id="photoStack">
+          <figure class="photo-slide active">
+            <img src="assets/baby-rabbit.jpg" alt="宝宝穿着兔兔衣服的照片" />
+            <figcaption>小宝贝在等妈妈回家</figcaption>
+          </figure>
+          <figure class="photo-slide">
+            <img src="assets/family-memory.jpg" alt="爸爸妈妈的合照" />
+            <figcaption>我们一直在你身边</figcaption>
+          </figure>
+        </div>
+        <div class="carousel-dots" aria-label="切换照片">
+          <button class="active" type="button" aria-label="查看第一张照片" data-slide="0"></button>
+          <button type="button" aria-label="查看第二张照片" data-slide="1"></button>
+        </div>
       </section>
 
       <section class="panel anniversary-card">
@@ -114,14 +144,6 @@
 
       <section class="panel">
         <div class="section-heading">
-          <h2>未来7天排班</h2>
-          <span class="soft-note">一眼看到接下来怎么上班</span>
-        </div>
-        <div class="week-list" id="weekList"></div>
-      </section>
-
-      <section class="panel">
-        <div class="section-heading">
           <h2>快速录入</h2>
           <button class="ghost-button" type="button" id="todayButton">今天</button>
         </div>
@@ -149,6 +171,20 @@
           <button class="ghost-button" type="button" id="clearPastButton">清理过期</button>
         </div>
         <div class="schedule-list" id="scheduleList"></div>
+      </section>
+
+      <section class="panel backup-panel">
+        <div class="section-heading">
+          <h2>数据备份</h2>
+          <span class="soft-note">换手机也不怕</span>
+        </div>
+        <p class="backup-copy">可以把排班和纪念日保存成一个小文件，需要时再恢复回来。</p>
+        <div class="backup-actions">
+          <button class="ghost-button" type="button" id="exportButton">备份数据</button>
+          <button class="ghost-button" type="button" id="importButton">恢复数据</button>
+        </div>
+        <input class="hidden" type="file" id="importFile" accept="application/json,.json" />
+        <p class="save-toast" id="backupToast" role="status" aria-live="polite"></p>
       </section>
 
       <footer class="app-footer">由老公法良为老婆定制 ❤️</footer>

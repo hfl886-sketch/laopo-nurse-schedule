@@ -1,4 +1,4 @@
-const CACHE_NAME = "laopo-nurse-schedule-v3";
+const CACHE_NAME = "laopo-nurse-schedule-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
